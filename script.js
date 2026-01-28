@@ -86,7 +86,7 @@ function resetTimer() {
 function completeSession() {
     pauseTimer();
     
-    // Save the current session label before switching
+    // Save the current session label text for the notification message
     const completedSessionLabel = sessionLabel.textContent;
     
     // Update pomodoro count if work session completed
@@ -112,10 +112,14 @@ function completeSession() {
     
     // Show browser notification
     if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('Pomodoro Timer', {
-            body: `${completedSessionLabel} completed! Starting ${nextSessionLabel}.`,
-            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23667eea"/></svg>'
-        });
+        try {
+            new Notification('Pomodoro Timer', {
+                body: `${completedSessionLabel} completed! Starting ${nextSessionLabel}.`,
+                icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23667eea"/></svg>'
+            });
+        } catch (error) {
+            console.error('Failed to show notification:', error);
+        }
     }
     
     // Show toast notification instead of blocking alert
@@ -147,6 +151,14 @@ function switchSession(sessionType) {
 
 // Show toast notification
 function showToast(message) {
+    // Remove any existing toasts
+    const existingToasts = document.querySelectorAll('.toast');
+    existingToasts.forEach(t => {
+        if (t.parentNode) {
+            t.parentNode.removeChild(t);
+        }
+    });
+    
     // Create toast element
     const toast = document.createElement('div');
     toast.className = 'toast';
@@ -162,7 +174,9 @@ function showToast(message) {
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => {
-            document.body.removeChild(toast);
+            if (toast.parentNode) {
+                document.body.removeChild(toast);
+            }
         }, 300);
     }, 5000);
 }

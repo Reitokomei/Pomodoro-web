@@ -11,7 +11,7 @@
         <h1>Pomodoro Timer</h1>
         
         <div class="timer-display">
-            <div id="timer">25:00</div>
+            <div id="timer" aria-live="polite" aria-atomic="true">25:00</div>
         </div>
         
         <div class="timer-label">
@@ -19,9 +19,9 @@
         </div>
         
         <div class="controls">
-            <button id="start-btn" class="btn btn-primary">Start</button>
-            <button id="pause-btn" class="btn btn-secondary" disabled>Pause</button>
-            <button id="reset-btn" class="btn btn-tertiary">Reset</button>
+            <button id="start-btn" class="btn btn-primary" aria-label="Start timer">Start</button>
+            <button id="pause-btn" class="btn btn-secondary" aria-label="Pause timer" disabled>Pause</button>
+            <button id="reset-btn" class="btn btn-tertiary" aria-label="Reset timer">Reset</button>
         </div>
         
         <div class="session-selector">
