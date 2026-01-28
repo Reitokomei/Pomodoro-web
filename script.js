@@ -6,6 +6,9 @@ let currentSession = 'work';
 let pomodoroCount = 0;
 let workSessionsCompleted = 0;
 
+// Constants
+const POMODOROS_UNTIL_LONG_BREAK = 4;
+
 // DOM elements
 const timerDisplay = document.getElementById('timer');
 const sessionLabel = document.getElementById('session-label');
@@ -73,7 +76,8 @@ function pauseTimer() {
 // Reset timer
 function resetTimer() {
     pauseTimer();
-    const duration = parseInt(document.querySelector('.session-btn.active').dataset.duration);
+    const activeBtn = document.querySelector('.session-btn.active');
+    const duration = activeBtn ? parseInt(activeBtn.dataset.duration) : sessions[currentSession].duration;
     timeRemaining = duration * 60;
     updateDisplay();
 }
@@ -82,33 +86,40 @@ function resetTimer() {
 function completeSession() {
     pauseTimer();
     
-    // Play notification sound (browser notification)
-    if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('Pomodoro Timer', {
-            body: `${sessionLabel.textContent} completed!`,
-            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23667eea"/></svg>'
-        });
-    }
+    // Save the current session label before switching
+    const completedSessionLabel = sessionLabel.textContent;
     
     // Update pomodoro count if work session completed
+    let nextSessionLabel = '';
     if (currentSession === 'work') {
         pomodoroCount++;
         workSessionsCompleted++;
         pomodoroCountDisplay.textContent = pomodoroCount;
         
         // Auto-switch to break
-        if (workSessionsCompleted % 4 === 0) {
+        if (workSessionsCompleted % POMODOROS_UNTIL_LONG_BREAK === 0) {
             switchSession('longBreak');
+            nextSessionLabel = 'Long Break';
         } else {
             switchSession('shortBreak');
+            nextSessionLabel = 'Short Break';
         }
     } else {
         // After break, switch to work
         switchSession('work');
+        nextSessionLabel = 'Work Session';
     }
     
-    // Alert user
-    alert(`${sessionLabel.textContent} completed! Starting ${sessionLabel.textContent}.`);
+    // Show browser notification
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Pomodoro Timer', {
+            body: `${completedSessionLabel} completed! Starting ${nextSessionLabel}.`,
+            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23667eea"/></svg>'
+        });
+    }
+    
+    // Show toast notification instead of blocking alert
+    showToast(`${completedSessionLabel} completed! Starting ${nextSessionLabel}.`);
 }
 
 // Switch session type
@@ -132,6 +143,28 @@ function switchSession(sessionType) {
     } else if (sessionType === 'longBreak') {
         longBreakBtn.classList.add('active');
     }
+}
+
+// Show toast notification
+function showToast(message) {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    // Show toast
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 100);
+    
+    // Hide and remove toast after 5 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 5000);
 }
 
 // Attach event listeners
