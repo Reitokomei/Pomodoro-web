@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Pomodoro Timer</h1>
+        
+        <div class="timer-display">
+            <div id="timer" aria-live="polite" aria-atomic="true">25:00</div>
+        </div>
+        
+        <div class="timer-label">
+            <span id="session-label">Work Session</span>
+        </div>
+        
+        <div class="controls">
+            <button id="start-btn" class="btn btn-primary" aria-label="Start timer">Start</button>
+            <button id="pause-btn" class="btn btn-secondary" aria-label="Pause timer" disabled>Pause</button>
+            <button id="reset-btn" class="btn btn-tertiary" aria-label="Reset timer">Reset</button>
+        </div>
+        
+        <div class="session-selector">
+            <button id="work-btn" class="session-btn active" data-duration="25">Work (25min)</button>
+            <button id="short-break-btn" class="session-btn" data-duration="5">Short Break (5min)</button>
+            <button id="long-break-btn" class="session-btn" data-duration="15">Long Break (15min)</button>
+        </div>
+        
+        <div class="pomodoro-counter">
+            <span>Pomodoros completed: <span id="pomodoro-count">0</span></span>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
